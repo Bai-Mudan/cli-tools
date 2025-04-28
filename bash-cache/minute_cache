@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+cmd=$1
+shift 1
+
+find /tmp/cache_store -mindepth 1 -mmin +1 -delete
+
+[ -d "/tmp/cache_store" ] || mkdir /tmp/cache_store
+[ -d "/tmp/cache_store/${cmd}" ] || mkdir "/tmp/cache_store/${cmd}"
+
+filename=$(printf "%s " "$cmd" "$@" | shasum | awk '{print $1}')
+
+if [ ! -f "/tmp/cache_store/${cmd}/${filename}" ] || [ "$CACHE_FORCE_EXEC" = "true" ]; then
+    "$cmd" "${@}" > "/tmp/cache_store/${cmd}/${filename}"
+
+    exitcode="$?"
+    if [ "$exitcode" -ne 0 ]; then
+        rm -f "/tmp/cache_store/${cmd}/${filename}" || true
+        exit "$exitcode"
+    fi
+fi
+
+cat "/tmp/cache_store/${cmd}/${filename}"
