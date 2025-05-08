@@ -23,9 +23,6 @@ traceFsEvents()
     /rename/ {
         print "Rename from:", $2, "to:", $4
     }
-    {
-        print "DEBUG:", $0
-    }
   ' | uniq
 }
 

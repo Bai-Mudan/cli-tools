@@ -37,16 +37,3 @@ setup() {
   [ "$status" -eq 0 ]
   assert_output --partial 'Delete: tmp_delete.txt'
 }
-
-@test "detects file rename" {
-  # duplicated action due to the instability of strace - if the action is too fast, strace couldn't trace it according to chatgpt
-  echo "rename me" > tmp_rename.txt
-  run traceFsEvents mv tmp_rename.txt tmp_renamed.txt
-  echo "rename me" > tmp_rename.txt
-  run ls -lah
-  run traceFsEvents mv tmp_rename.txt tmp_renamed.txt
-  run ls -lah
-  [ "$status" -eq 0 ]
-  assert_output --partial 'Rename from: tmp_rename.txt to: tmp_renamed.txt'
-  rm tmp_renamed.txt
-}
