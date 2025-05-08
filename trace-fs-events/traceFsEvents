@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+
+traceFsEvents()
+{
+    strace -ff -D -e trace=open,openat,unlink,unlinkat,rename,creat "$@" 2>&1 | awk '
+    BEGIN {
+      FS="\""
+      RS="\n"
+    }
+    /open|openat/ {
+        if ($0 ~ /O_WRONLY|O_RDWR|O_CREAT|O_TRUNC|O_APPEND/) {
+          print "Write:", $2
+        } else if ($0 ~ /O_RDONLY/ || $0 !~ /O_/) {
+          print "Read:", $2
+        }
+    }
+    /creat/ {
+        print "Create:", $2
+    }
+    /unlink|unlinkat/ {
+        print "Delete:", $2
+    }
+    /rename/ {
+        print "Rename from:", $2, "to:", $4
+    }
+  ' | uniq
+}
+
+traceFsEvents "$@"
