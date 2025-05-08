@@ -41,9 +41,9 @@ setup() {
 @test "detects file rename" {
   # duplicated action due to the instability of strace - if the action is too fast, strace couldn't trace it according to chatgpt
   echo "rename me" > tmp_rename.txt
-  run traceFsEvents bash -c "mv tmp_rename.txt tmp_renamed.txt"
+  run traceFsEvents bash -c "mv -T tmp_rename.txt tmp_renamed.txt"
   echo "rename me" > tmp_rename.txt
-  run traceFsEvents bash -c "mv tmp_rename.txt tmp_renamed.txt"
+  run traceFsEvents bash -c "mv -T tmp_rename.txt tmp_renamed.txt"
   [ "$status" -eq 0 ]
   assert_output --partial 'Rename from: tmp_rename.txt to: tmp_renamed.txt'
   rm tmp_renamed.txt
