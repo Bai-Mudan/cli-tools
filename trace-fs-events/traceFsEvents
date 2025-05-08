@@ -21,8 +21,10 @@ traceFsEvents()
         print "Delete:", $2
     }
     /rename/ {
-        print "DEBUG:", $0
         print "Rename from:", $2, "to:", $4
+    }
+    {
+        print "DEBUG:", $0
     }
   ' | uniq
 }
