@@ -37,3 +37,11 @@ setup() {
   [ "$status" -eq 0 ]
   assert_output --partial 'Delete: tmp_delete.txt'
 }
+
+@test "detects file rename" {
+  echo "rename me" > tmp_source.txt
+  run traceFsEvents bash -c "mv tmp_source.txt tmp_destination.txt"
+  [ "$status" -eq 0 ]
+  assert_output --partial 'Rename from: tmp_source.txt to: tmp_destination.txt'
+  rm tmp_destination.txt
+}

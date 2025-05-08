@@ -2,7 +2,7 @@
 
 traceFsEvents()
 {
-    strace -ff -D -e trace=open,openat,unlink,unlinkat,rename,creat "$@" 2>&1 | awk '
+    strace -ff -D -e trace=open,openat,unlink,unlinkat,rename,renameat,renameat2,creat "$@" 2>&1 | awk '
     BEGIN {
       FS="\""
       RS="\n"
@@ -20,7 +20,7 @@ traceFsEvents()
     /unlink|unlinkat/ {
         print "Delete:", $2
     }
-    /rename/ {
+    /rename|renameat|renameat2/ {
         print "Rename from:", $2, "to:", $4
     }
   ' | uniq
